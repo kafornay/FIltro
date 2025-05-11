@@ -3,232 +3,131 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Filtro de Preços - Mercado Couto</title>
+  <title>Filtro de Melhores Preços</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
-      background: #f4f6f8;
-      margin: 0;
-      padding: 0;
-      color: #333;
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f5f5f5;
     }
     .container {
       max-width: 900px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 30px;
+      margin: auto;
+      background: white;
+      padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    h1 {
-      text-align: center;
-      color: #e67e22;
-      margin-bottom: 20px;
-    }
-    .field {
-      margin-bottom: 20px;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 8px;
-    }
-    input, select {
+    textarea {
       width: 100%;
-      padding: 12px;
-      font-size: 1rem;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      box-sizing: border-box;
-      margin-bottom: 10px;
+      height: 200px;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: none;
     }
     button {
-      padding: 12px;
-      font-size: 1.1rem;
-      cursor: pointer;
+      padding: 10px 20px;
+      margin: 10px 5px 20px 0;
       border: none;
-      border-radius: 8px;
-      width: 100%;
-      margin-bottom: 20px;
-    }
-    #addItem {
-      background-color: #27ae60;
-      color: #fff;
-    }
-    #addItem:hover {
-      background-color: #2ecc71;
-    }
-    .quotation-list {
-      margin-top: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-    .quotation-box {
-      background: #f9f9f9;
-      padding: 15px;
-      width: 100%;
-      max-width: 400px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    .quotation-box h3 {
-      margin-top: 0;
-      color: #e67e22;
-    }
-    .quotation-box ul {
-      list-style: none;
-      padding: 0;
-    }
-    .quotation-box li {
-      padding: 8px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .quotation-box li:last-child {
-      border-bottom: none;
-    }
-    .quotation-box .total {
-      font-weight: bold;
-      color: #27ae60;
-      margin-top: 10px;
-    }
-    .whatsapp-btn {
-      display: inline-block;
-      padding: 10px 15px;
-      background: #25d366;
+      border-radius: 5px;
+      background: #007bff;
       color: white;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 1rem;
-      width: 100%;
-      text-align: center;
-      margin-top: 15px;
+      cursor: pointer;
     }
-    .whatsapp-btn:hover {
-      background: #128c7e;
+    .item-card {
+      background: #e9f5e9;
+      border-left: 5px solid #28a745;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    .fornecedor {
+      background: #fff;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+    }
+    .fornecedor h3 {
+      margin-top: 0;
+    }
+    .whatsapp {
+      display: inline-block;
+      margin-top: 10px;
+      background: #25d366;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h2>Filtro de Melhores Preços</h2>
+    <textarea id="cotacao" placeholder="Cole aqui as cotações..."></textarea>
+    <button onclick="adicionarCotacao()">Adicionar</button>
+    <button onclick="filtrarMelhoresPrecos()">Filtrar Melhores Preços</button>
 
-<div class="container">
-  <h1>🛒 Filtro de Preços - Mercado Couto</h1>
-
-  <div class="field">
-    <label for="cotacao">Cole sua Cotação:</label>
-    <textarea id="cotacao" rows="8" placeholder="Cole a cotação aqui"></textarea>
+    <div id="listaCotacoes"></div>
+    <hr />
+    <div id="resultado"></div>
   </div>
 
-  <button id="addItem">Adicionar Cotação</button>
+  <script>
+    const cotacoes = [];
 
-  <div class="quotation-list" id="quotationList"></div>
-
-  <button id="filtrarMelhoresPrecos" style="background-color: #e67e22; color: #fff;">Filtrar Melhores Preços</button>
-</div>
-
-<script>
-  const addItemButton = document.getElementById('addItem');
-  const filtrarButton = document.getElementById('filtrarMelhoresPrecos');
-  const cotacaoTextArea = document.getElementById('cotacao');
-  const quotationList = document.getElementById('quotationList');
-
-  let cotacoes = [];
-
-  addItemButton.addEventListener('click', () => {
-    const cotacao = cotacaoTextArea.value.trim();
-    if (!cotacao) return alert('Por favor, cole uma cotação.');
-    
-    cotacoes.push(parseCotacao(cotacao));
-    cotacaoTextArea.value = '';
-    renderCotacoes();
-  });
-
-  filtrarButton.addEventListener('click', () => {
-    const melhoresPrecos = filtrarMelhoresPrecos(cotacoes);
-    renderMelhoresPrecos(melhoresPrecos);
-  });
-
-  function parseCotacao(cotacao) {
-    const linhas = cotacao.split('\n').filter(line => line.trim() !== '');
-    const empresa = linhas[1].split(':')[1].trim();
-    const entrega = linhas[2].split(':')[1].trim();
-    const itens = [];
-    
-    for (let i = 3; i < linhas.length; i++) {
-      const linha = linhas[i].trim();
-      if (linha.startsWith('📦')) {
-        const produto = linha.split('*')[1];
-        const marca = linhas[i + 1].split(':')[1].trim();
-        const quantidade = parseInt(linhas[i + 2].split(':')[1].trim());
-        const valor = parseFloat(linhas[i + 3].split(':')[1].trim().replace('R$', '').trim());
-        const subtotal = parseFloat(linhas[i + 4].split(':')[1].trim().replace('R$', '').trim());
-
-        itens.push({ produto, marca, quantidade, valor, subtotal });
-      }
+    function adicionarCotacao() {
+      const texto = document.getElementById('cotacao').value.trim();
+      if (!texto) return;
+      cotacoes.push(texto);
+      const div = document.createElement('div');
+      div.className = 'item-card';
+      div.textContent = texto.split('\n')[1] || 'Cotação adicionada';
+      document.getElementById('listaCotacoes').appendChild(div);
+      document.getElementById('cotacao').value = '';
     }
 
-    return { empresa, entrega, itens };
-  }
+    function filtrarMelhoresPrecos() {
+      const precosMap = new Map();
+      const fornecedores = {};
 
-  function filtrarMelhoresPrecos(cotacoes) {
-    const melhoresPrecos = [];
+      cotacoes.forEach(txt => {
+        const empresaMatch = txt.match(/\*Empresa:\* (.+)/);
+        const empresa = empresaMatch ? empresaMatch[1].trim() : 'Desconhecida';
 
-    cotacoes.forEach(cotacao => {
-      const precoPorItem = {};
+        const itens = txt.split('📦').slice(1);
+        itens.forEach(bloco => {
+          const linhas = bloco.trim().split('\n');
+          const nomeMatch = linhas[0].match(/\*(.+)\*/);
+          const nome = nomeMatch ? nomeMatch[1].toLowerCase().trim() : '';
+          const valorMatch = linhas.find(l => l.includes('Valor unitário')).match(/R\$\s*([\d,\.]+)/);
+          const valor = valorMatch ? parseFloat(valorMatch[1].replace(',', '.')) : Infinity;
 
-      cotacao.itens.forEach(item => {
-        if (!precoPorItem[item.produto] || precoPorItem[item.produto].valor > item.valor) {
-          precoPorItem[item.produto] = item;
-        }
+          if (!nome) return;
+
+          if (!precosMap.has(nome) || precosMap.get(nome).valor > valor) {
+            precosMap.set(nome, { valor, empresa, texto: bloco.trim() });
+          }
+        });
       });
 
-      const itensVencedores = Object.values(precoPorItem);
-      const total = itensVencedores.reduce((acc, item) => acc + item.subtotal, 0);
+      // Agrupar por fornecedor
+      precosMap.forEach(({ empresa, texto }) => {
+        if (!fornecedores[empresa]) fornecedores[empresa] = [];
+        fornecedores[empresa].push(texto);
+      });
 
-      melhoresPrecos.push({ empresa: cotacao.empresa, entrega: cotacao.entrega, itens: itensVencedores, total });
-    });
-
-    return melhoresPrecos;
-  }
-
-  function renderCotacoes() {
-    quotationList.innerHTML = '';
-
-    cotacoes.forEach((cotacao, index) => {
-      const cotacaoElement = document.createElement('div');
-      cotacaoElement.classList.add('quotation-box');
-      cotacaoElement.innerHTML = `
-        <h3>${cotacao.empresa}</h3>
-        <ul>
-          ${cotacao.itens.map(item => `
-            <li><strong>${item.produto}</strong> - ${item.marca} - Qtd: ${item.quantidade} - R$ ${item.valor.toFixed(2)} - Subtotal: R$ ${item.subtotal.toFixed(2)}</li>
-          `).join('')}
-        </ul>
-      `;
-      quotationList.appendChild(cotacaoElement);
-    });
-  }
-
-  function renderMelhoresPrecos(melhoresPrecos) {
-    quotationList.innerHTML = '';
-
-    melhoresPrecos.forEach(cotacao => {
-      const cotacaoElement = document.createElement('div');
-      cotacaoElement.classList.add('quotation-box');
-      cotacaoElement.innerHTML = `
-        <h3>${cotacao.empresa}</h3>
-        <ul>
-          ${cotacao.itens.map(item => `
-            <li><strong>${item.produto}</strong> - ${item.marca} - Qtd: ${item.quantidade} - R$ ${item.valor.toFixed(2)} - Subtotal: R$ ${item.subtotal.toFixed(2)}</li>
-          `).join('')}
-        </ul>
-        <div class="total">Total: R$ ${cotacao.total.toFixed(2)}</div>
-        <a href="https://wa.me/?text=${encodeURIComponent(`🛒 *Cotação Mercado Couto*\n*Empresa:* ${cotacao.empresa}\n*Entrega:* ${cotacao.entrega}\n${cotacao.itens.map(item => `📦 *${item.produto}*\nMarca: ${item.marca}\nQtd: ${item.quantidade}\nValor unitário: R$ ${item.valor.toFixed(2)}\nSubtotal: R$ ${item.subtotal.toFixed(2)}\n`).join('')}\nTotal: R$ ${cotacao.total.toFixed(2)}`)}" class="whatsapp-btn" target="_blank">Compartilhar via WhatsApp</a>
-      `;
-      quotationList.appendChild(cotacaoElement);
-    });
-  }
-</script>
-
+      // Renderizar resultado
+      const resultadoDiv = document.getElementById('resultado');
+      resultadoDiv.innerHTML = '';
+      for (let [empresa, itens] of Object.entries(fornecedores)) {
+        const div = document.createElement('div');
+        div.className = 'fornecedor';
+        div.innerHTML = `<h3>${empresa}</h3><ul>${itens.map(i => `<li>${i.replace(/\n/g, '<br>')}</li>`).join('')}</ul>`;
+        const msg = encodeURIComponent(`Pedido ${empresa}:\n` + itens.join('\n\n'));
+        div.innerHTML += `<a class='whatsapp' href='https://wa.me/?text=${msg}' target='_blank'>Compartilhar via WhatsApp</a>`;
+        resultadoDiv.appendChild(div);
+      }
+    }
+  </script>
 </body>
 </html>
