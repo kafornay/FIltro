@@ -172,12 +172,12 @@
                 if (line.includes('Empresa:')) {
                     company = line.split('Empresa:')[1].trim();
                 }
-                if (line.includes('Marca:')) {
+                if (line.includes('Marca:') && line.includes('Qtd:') && line.includes('Valor unitário:')) {
                     const product = {};
-                    const match = line.match(/([a-zA-Z\s]+)\s+Marca:\s+([a-zA-Z\s]+)\s+Qtd:\s+(\d+)\s+Valor\s+unitário:\s+R\$ ([\d,\.]+)/);
+                    const match = line.match(/\*([a-zA-Z0-9\s]+)\*\s+Marca:\s+([a-zA-Z\s]+)\s+Qtd:\s+(\d+)\s+Valor\s+unitário:\s+R\$\s*([\d,\.]+)/);
                     if (match) {
-                        product.name = match[1];
-                        product.brand = match[2];
+                        product.name = match[1].trim();
+                        product.brand = match[2].trim();
                         product.quantity = parseInt(match[3]);
                         product.unitPrice = parseFloat(match[4].replace(',', '.'));
                         product.subTotal = product.quantity * product.unitPrice;
