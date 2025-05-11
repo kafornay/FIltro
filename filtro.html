@@ -1,212 +1,370 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filtro de Cotação</title>
-    <style>
-        /* Reset geral */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <title>Cotação - Mercado Couto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding-bottom: 80px; /* espaço para o botão fixo */
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f7fc;
-            padding: 20px;
-        }
+    .container {
+      max-width: 650px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
+    h1 {
+      text-align: center;
+      color: #d35400;
+    }
 
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-        }
+    .field {
+      margin-bottom: 15px;
+    }
 
-        .filter-section {
-            margin-bottom: 20px;
-        }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
 
-        .filter-section input,
-        .filter-section button {
-            padding: 10px;
-            width: 100%;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            margin-top: 10px;
-        }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
 
-        .filter-section button {
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            border: none;
-        }
+    button {
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      width: 100%;
+      box-sizing: border-box;
+    }
 
-        .filter-section button:hover {
-            background-color: #45a049;
-        }
+    #addItem {
+      background-color: #d35400;
+      color: #fff;
+      margin-top: 10px;
+    }
 
-        .message-section {
-            margin-top: 30px;
-        }
+    #addItem:hover {
+      background-color: #e67e22;
+    }
 
-        .message-item {
-            background-color: #fafafa;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 8px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
 
-        .message-item p {
-            margin: 5px 0;
-        }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
 
-        .message-item .total {
-            font-weight: bold;
-            color: #2c6d34;
-        }
+    th {
+      background-color: #f3f3f3;
+    }
 
-        .copy-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #009688;
-            color: white;
-            border-radius: 5px;
-            text-decoration: none;
-            margin-top: 10px;
-            cursor: pointer;
-        }
+    .removeBtn {
+      background: none;
+      color: #e74c3c;
+      font-size: 1.1rem;
+      border: none;
+      cursor: pointer;
+    }
 
-        .copy-button:hover {
-            background-color: #00796b;
-        }
+    #totalDisplay {
+      text-align: right;
+      margin-top: 10px;
+      font-weight: bold;
+    }
 
-        /* Ajustes para telas pequenas */
-        @media screen and (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
+    #sendData {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 40px);
+      max-width: 650px;
+      background-color: #27ae60;
+      color: white;
+      z-index: 999;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
 
-            h1 {
-                font-size: 22px;
-            }
+    #sendData:hover {
+      background-color: #2ecc71;
+    }
 
-            .message-item {
-                padding: 10px;
-            }
+    .filterBox {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
 
-            .filter-section input,
-            .filter-section button {
-                padding: 12px;
-                font-size: 14px;
-            }
-        }
-    </style>
+    .filterBox .box {
+      background: #f8f8f8;
+      padding: 20px;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 290px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .filterBox .box h3 {
+      color: #d35400;
+      font-size: 1.2rem;
+    }
+
+    .filterBox .box button {
+      background-color: #27ae60;
+      color: white;
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .filterBox .box button:hover {
+      background-color: #2ecc71;
+    }
+
+    .filterBox .box .item {
+      margin-bottom: 10px;
+    }
+
+    .filterBox .box .item span {
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Filtro de Cotação</h1>
+  <div class="container">
+    <h1>🛒 Cotação - Mercado Couto</h1>
 
-    <!-- Filtro por fornecedor -->
-    <div class="filter-section">
-        <h3>Cole as cotações por fornecedor:</h3>
-
-        <label for="fornecedor1">Fornecedor 1:</label>
-        <textarea id="fornecedor1" placeholder="Cole a cotação do Fornecedor 1"></textarea>
-
-        <label for="fornecedor2">Fornecedor 2:</label>
-        <textarea id="fornecedor2" placeholder="Cole a cotação do Fornecedor 2"></textarea>
-
-        <label for="fornecedor3">Fornecedor 3:</label>
-        <textarea id="fornecedor3" placeholder="Cole a cotação do Fornecedor 3"></textarea>
-
-        <label for="fornecedor4">Fornecedor 4:</label>
-        <textarea id="fornecedor4" placeholder="Cole a cotação do Fornecedor 4"></textarea>
-
-        <label for="fornecedor5">Fornecedor 5:</label>
-        <textarea id="fornecedor5" placeholder="Cole a cotação do Fornecedor 5"></textarea>
-
-        <label for="fornecedor6">Fornecedor 6:</label>
-        <textarea id="fornecedor6" placeholder="Cole a cotação do Fornecedor 6"></textarea>
-
-        <button onclick="filterMessages()">Filtrar</button>
+    <div class="field">
+      <label for="empresa">Nome da Empresa:</label>
+      <input type="text" id="empresa" placeholder="Digite o nome da sua empresa" required />
     </div>
 
-    <!-- Mensagens filtradas -->
-    <div class="message-section" id="messageSection"></div>
-</div>
+    <div class="field">
+      <label for="dataEntrega">Data de Entrega:</label>
+      <input type="date" id="dataEntrega" required />
+    </div>
 
-<!-- Script para manipulação -->
-<script>
-    function filterMessages() {
-        let messages = [];
-        for (let i = 1; i <= 6; i++) {
-            const message = document.getElementById(`fornecedor${i}`).value.trim();
-            if (message) {
-                messages.push({ fornecedor: `Fornecedor ${i}`, message });
-            }
-        }
+    <div class="field">
+      <label for="produto">Produto:</label>
+      <select id="produto"></select>
+    </div>
 
-        let outputHtml = '';
-        messages.forEach(data => {
-            const message = data.message.split('\n');
-            let company = '';
-            let products = [];
-            let total = 0;
+    <div class="field">
+      <label for="marca">Marca:</label>
+      <input type="text" id="marca" />
+    </div>
 
-            message.forEach(line => {
-                if (line.includes('Empresa:')) {
-                    company = line.split('Empresa:')[1].trim();
-                }
-                if (line.includes('Marca:') && line.includes('Qtd:') && line.includes('Valor unitário:')) {
-                    const product = {};
-                    const match = line.match(/\*([a-zA-Z0-9\s]+)\*\s+Marca:\s+([a-zA-Z\s]+)\s+Qtd:\s+(\d+)\s+Valor\s+unitário:\s+R\$\s*([\d,\.]+)/);
-                    if (match) {
-                        product.name = match[1].trim();
-                        product.brand = match[2].trim();
-                        product.quantity = parseInt(match[3]);
-                        product.unitPrice = parseFloat(match[4].replace(',', '.'));
-                        product.subTotal = product.quantity * product.unitPrice;
-                        products.push(product);
-                        total += product.subTotal;
-                    }
-                }
-            });
+    <div class="field">
+      <label for="quantidade">Quantidade:</label>
+      <input type="number" id="quantidade" />
+    </div>
 
-            if (company && products.length > 0) {
-                outputHtml += `<div class="message-item"><h4>${data.fornecedor} - ${company}</h4>`;
-                products.forEach(product => {
-                    outputHtml += `
-                        <p><strong>${product.name}</strong> (Marca: ${product.brand})</p>
-                        <p>Quantidade: ${product.quantity} | Preço unitário: R$ ${product.unitPrice.toFixed(2)} | Subtotal: R$ ${product.subTotal.toFixed(2)}</p>
-                    `;
-                });
-                outputHtml += `<p class="total">Total Geral: R$ ${total.toFixed(2)}</p>`;
-                outputHtml += `<a href="https://wa.me/5521992576333?text=Pedido%20da%20${encodeURIComponent(company)}" class="copy-button" target="_blank">Enviar via WhatsApp</a></div>`;
-            }
+    <div class="field">
+      <label for="valor">Valor unitário (R$):</label>
+      <input type="number" id="valor" step="0.01" />
+    </div>
+
+    <button id="addItem">+ Adicionar à Lista</button>
+
+    <table id="listaItens">
+      <thead>
+        <tr>
+          <th>Produto</th>
+          <th>Marca</th>
+          <th>Qtd</th>
+          <th>Total (R$)</th>
+          <th>Remover</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div id="totalDisplay"></div>
+  </div>
+
+  <div class="filterBox">
+    <!-- As caixas dos fornecedores serão geradas aqui -->
+  </div>
+
+  <button id="sendData">Enviar via WhatsApp</button>
+
+  <script>
+    const produtoSelect = document.getElementById("produto");
+    const addItemBtn = document.getElementById("addItem");
+    const listaItens = document.getElementById("listaItens").getElementsByTagName('tbody')[0];
+    const sendDataBtn = document.getElementById("sendData");
+    const totalDisplay = document.getElementById("totalDisplay");
+    const filterBox = document.querySelector(".filterBox");
+
+    let itens = JSON.parse(localStorage.getItem('itens')) || [];
+
+    const apiUrl = "https://script.google.com/macros/s/AKfycbxLJAKDj6xrk2pZK2Kst6hGKQZO4OAXx9ZKZIzuT3Qs1Oxv1fKsbpFTQKWTLkLd7DtA7A/exec";
+
+    fetch(apiUrl)
+      .then(res => res.json())
+      .then(data => {
+        data.forEach(item => {
+          const option = document.createElement("option");
+          option.textContent = item.Produto || item.produto;
+          produtoSelect.appendChild(option);
+        });
+      })
+      .catch(err => {
+        console.error("Erro ao carregar produtos:", err);
+        produtoSelect.innerHTML = '<option>Erro ao carregar</option>';
+      });
+
+    function renderLista() {
+      listaItens.innerHTML = "";
+      let total = 0;
+
+      itens.forEach((item, index) => {
+        const subtotal = parseFloat(item.valor) * parseFloat(item.quantidade);
+        total += subtotal;
+
+        const row = listaItens.insertRow();
+        row.innerHTML = `
+          <td>${item.produto}</td>
+          <td>${item.marca}</td>
+          <td>${item.quantidade}</td>
+          <td>R$ ${subtotal.toFixed(2)}</td>
+          <td><button class="removeBtn">X</button></td>
+        `;
+
+        row.querySelector(".removeBtn").addEventListener("click", () => {
+          itens.splice(index, 1);
+          localStorage.setItem('itens', JSON.stringify(itens));
+          renderLista();
+        });
+      });
+
+      totalDisplay.textContent = `Total: R$ ${total.toFixed(2)}`;
+    }
+
+    addItemBtn.addEventListener("click", () => {
+      const produto = produtoSelect.value;
+      const marca = document.getElementById("marca").value;
+      const quantidade = document.getElementById("quantidade").value;
+      const valor = document.getElementById("valor").value;
+
+      if (!marca || !quantidade || !valor) {
+        alert("Preencha todos os campos antes de adicionar.");
+        return;
+      }
+
+      itens.push({ produto, marca, quantidade, valor });
+      localStorage.setItem('itens', JSON.stringify(itens));
+
+      document.getElementById("marca").value = '';
+      document.getElementById("quantidade").value = '';
+      document.getElementById("valor").value = '';
+
+      renderLista();
+    });
+
+    sendDataBtn.addEventListener("click", () => {
+      const empresa = document.getElementById("empresa").value;
+      const dataEntrega = document.getElementById("dataEntrega").value;
+
+      if (!empresa || !dataEntrega || itens.length === 0) {
+        alert("Informe o nome da empresa, a data de entrega e adicione ao menos um item.");
+        return;
+      }
+
+      let mensagem = `🛒 *Cotação Mercado Couto*\n\n*Empresa:* ${empresa}\n*Entrega:* ${dataEntrega}\n\n`;
+      let total = 0;
+
+      itens.forEach(item => {
+        const subtotal = parseFloat(item.valor) * parseFloat(item.quantidade);
+        mensagem += `📦 *${item.produto}*\nMarca: ${item.marca}\nQtd: ${item.quantidade}\nValor unitário: R$ ${parseFloat(item.valor).toFixed(2)}\nSubtotal: R$ ${subtotal.toFixed(2)}\n\n`;
+        total += subtotal;
+      });
+
+      mensagem += `*Total geral:* R$ ${total.toFixed(2)}`;
+
+      const numero = "5521992576333";
+      const link = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
+      window.open(link, "_blank");
+    });
+
+    // Função para gerar as caixas dos fornecedores
+    function gerarCaixasFornecedor() {
+      const fornecedores = ['Atlas Rio', 'Nutrymax', 'Unimarka']; // Exemplo de fornecedores
+      fornecedores.forEach(fornecedor => {
+        const box = document.createElement("div");
+        box.classList.add("box");
+
+        const title = document.createElement("h3");
+        title.textContent = fornecedor;
+        box.appendChild(title);
+
+        let totalFornecedor = 0;
+
+        itens.filter(item => item.marca === fornecedor).forEach(item => {
+          const itemDiv = document.createElement("div");
+          itemDiv.classList.add("item");
+          const subtotal = parseFloat(item.valor) * parseFloat(item.quantidade);
+          totalFornecedor += subtotal;
+          itemDiv.innerHTML = `
+            <span>${item.produto}</span><br>
+            Marca: ${item.marca}<br>
+            Quantidade: ${item.quantidade}<br>
+            Subtotal: R$ ${subtotal.toFixed(2)}
+          `;
+          box.appendChild(itemDiv);
         });
 
-        if (outputHtml === '') {
-            outputHtml = '<p>Nenhum item encontrado nas mensagens.</p>';
-        }
+        const totalDiv = document.createElement("div");
+        totalDiv.innerHTML = `<strong>Total: R$ ${totalFornecedor.toFixed(2)}</strong>`;
+        box.appendChild(totalDiv);
 
-        document.getElementById('messageSection').innerHTML = outputHtml;
+        const shareButton = document.createElement("button");
+        shareButton.textContent = "Compartilhar via WhatsApp";
+        shareButton.addEventListener("click", () => {
+          const mensagem = `🛒 *Cotação Mercado Couto*\n*Fornecedor:* ${fornecedor}\n`;
+          let total = 0;
+          itens.filter(item => item.marca === fornecedor).forEach(item => {
+            const subtotal = parseFloat(item.valor) * parseFloat(item.quantidade);
+            total += subtotal;
+          });
+          const link = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem + `*Total: R$ ${total.toFixed(2)}`)}`;
+          window.open(link, "_blank");
+        });
+
+        box.appendChild(shareButton);
+        filterBox.appendChild(box);
+      });
     }
-</script>
+
+    renderLista();
+    gerarCaixasFornecedor();
+  </script>
 
 </body>
 </html>
