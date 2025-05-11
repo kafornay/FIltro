@@ -2,65 +2,153 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Filtro de Melhores Preços</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 20px;
-      background: #f5f5f5;
+      margin: 0;
+      background: #f0f0f0;
+      color: #333;
     }
     .container {
-      max-width: 900px;
-      margin: auto;
+      max-width: 960px;
+      margin: 20px auto;
       background: white;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #007bff;
+      text-align: center;
+      margin-bottom: 20px;
     }
     textarea {
-      width: 100%;
-      height: 200px;
+      width: calc(100% - 20px);
+      height: 150px;
       padding: 10px;
-      font-size: 14px;
+      font-size: 16px;
       border-radius: 6px;
       border: 1px solid #ccc;
-      resize: none;
+      resize: vertical;
+      margin-bottom: 10px;
     }
     button {
-      padding: 10px 20px;
-      margin: 10px 5px 20px 0;
+      display: inline-block;
+      padding: 12px 24px;
+      margin: 5px;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       background: #007bff;
       color: white;
       cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #listaCotacoes {
+      margin-top: 15px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background-color: #f9f9f9;
     }
     .item-card {
-      background: #e9f5e9;
+      background: #e6ffe6;
       border-left: 5px solid #28a745;
-      padding: 10px;
-      margin-bottom: 10px;
-      border-radius: 5px;
+      padding: 12px;
+      margin-bottom: 8px;
+      border-radius: 4px;
+      font-size: 15px;
+    }
+    hr {
+      border: 0;
+      border-top: 1px solid #eee;
+      margin: 20px 0;
+    }
+    #resultado {
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background-color: #fff;
     }
     .fornecedor {
-      background: #fff;
-      border: 1px solid #ddd;
-      padding: 10px;
-      margin-bottom: 20px;
-      border-radius: 5px;
+      background: #f8f8f8;
+      border: 1px solid #eee;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 6px;
     }
     .fornecedor h3 {
       margin-top: 0;
+      color: #28a745;
+      margin-bottom: 10px;
+    }
+    .fornecedor ul {
+      padding-left: 20px;
+      list-style-type: disc;
+    }
+    .fornecedor li {
+      margin-bottom: 5px;
+      font-size: 15px;
     }
     .whatsapp {
       display: inline-block;
-      margin-top: 10px;
+      margin-top: 15px;
       background: #25d366;
-      padding: 10px 15px;
       color: white;
-      text-decoration: none;
+      padding: 10px 15px;
       border-radius: 5px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+    .whatsapp:hover {
+      background-color: #128c7e;
+    }
+
+    /* Estilos para telas menores (mobile) */
+    @media (max-width: 600px) {
+      .container {
+        margin: 10px;
+        padding: 15px;
+      }
+      h2 {
+        font-size: 1.8em;
+        margin-bottom: 15px;
+      }
+      textarea {
+        font-size: 14px;
+        height: 120px;
+      }
+      button {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+        padding: 10px;
+        font-size: 14px;
+      }
+      .item-card {
+        font-size: 14px;
+        padding: 10px;
+      }
+      .fornecedor h3 {
+        font-size: 1.4em;
+      }
+      .fornecedor li {
+        font-size: 14px;
+      }
+      .whatsapp {
+        font-size: 14px;
+        padding: 8px 12px;
+        text-align: center;
+        display: block;
+        margin: 10px auto;
+      }
     }
   </style>
 </head>
@@ -69,48 +157,30 @@
     <h2>Filtro de Melhores Preços</h2>
     <textarea id="cotacao" placeholder="Cole aqui as cotações..."></textarea>
     <button onclick="adicionarCotacao()">Adicionar</button>
-    <button onclick="filtrarMelhoresPrecos()">Filtrar Melhores Preços</button>
 
     <div id="listaCotacoes"></div>
     <hr />
     <div id="resultado"></div>
+
+    <button onclick="filtrarMelhoresPrecos()">Filtrar Melhores Preços</button>
   </div>
 
   <script>
     const cotacoes = [];
 
-    function limparTexto(texto) {
-      // Remover emojis
-      texto = texto.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|\uD83E[\uDD00-\uDDFF])/g, '');
-      // Remover asteriscos, ícones e outros caracteres especiais
-      texto = texto.replace(/[*📦🛒]/g, '');
-      // Substituir múltiplos espaços por um único espaço
-      texto = texto.replace(/\s{2,}/g, ' ');
-      // Remover espaços no início e no fim de cada linha
-      texto = texto.split('\n').map(linha => linha.trim()).join('\n');
-      return texto.trim();
-    }
-
     function adicionarCotacao() {
-      const textarea = document.getElementById('cotacao');
-      let texto = textarea.value.trim();
+      const texto = document.getElementById('cotacao').value.trim();
       if (!texto) return;
-
-      // Limpar o texto
-      texto = limparTexto(texto);
-
-      // Adicionar à lista de cotações
       cotacoes.push(texto);
 
-      // Exibir um trecho da cotação adicionada
+      const empresaMatch = texto.match(/\*Empresa:\* (.+)/);
+      const nomeEmpresa = empresaMatch ? empresaMatch[1].trim() : 'Empresa não identificada';
+
       const div = document.createElement('div');
       div.className = 'item-card';
-      const linhas = texto.split('\n');
-      div.textContent = linhas[1] || 'Cotação adicionada';
+      div.textContent = `Cotação de: ${nomeEmpresa}`;
       document.getElementById('listaCotacoes').appendChild(div);
-
-      // Limpar o textarea
-      textarea.value = '';
+      document.getElementById('cotacao').value = '';
     }
 
     function filtrarMelhoresPrecos() {
@@ -118,23 +188,23 @@
       const fornecedores = {};
 
       cotacoes.forEach(txt => {
-        const empresaMatch = txt.match(/Empresa:\s*(.+)/i);
+        const empresaMatch = txt.match(/\*Empresa:\* (.+)/);
         const empresa = empresaMatch ? empresaMatch[1].trim() : 'Desconhecida';
 
-        const linhas = txt.split('\n');
-        for (let i = 0; i < linhas.length; i++) {
-          if (linhas[i].toLowerCase().includes('valor unitário')) {
-            const nome = linhas[i - 3] ? linhas[i - 3].trim().toLowerCase() : '';
-            const valorMatch = linhas[i].match(/R\$\s*([\d.,]+)/);
-            const valor = valorMatch ? parseFloat(valorMatch[1].replace('.', '').replace(',', '.')) : Infinity;
-            if (nome) {
-              const textoItem = linhas.slice(i - 3, i + 2).join('\n');
-              if (!precosMap.has(nome) || precosMap.get(nome).valor > valor) {
-                precosMap.set(nome, { valor, empresa, texto: textoItem });
-              }
-            }
+        const itens = txt.split('📦').slice(1);
+        itens.forEach(bloco => {
+          const linhas = bloco.trim().split('\n');
+          const nomeMatch = linhas[0].match(/\*(.+)\*/);
+          const nome = nomeMatch ? nomeMatch[1].toLowerCase().trim() : '';
+          const valorMatch = linhas.find(l => l.includes('Valor unitário')).match(/R\$\s*([\d,\.]+)/);
+          const valor = valorMatch ? parseFloat(valorMatch[1].replace(',', '.')) : Infinity;
+
+          if (!nome) return;
+
+          if (!precosMap.has(nome) || precosMap.get(nome).valor > valor) {
+            precosMap.set(nome, { valor, empresa, texto: bloco.trim() });
           }
-        }
+        });
       });
 
       // Agrupar por fornecedor
