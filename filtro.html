@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filtro MC</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+    }
+
+    h2 {
+      font-size: 24px;
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 8px;
+      padding: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      width: 100%;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      resize: vertical;
+      box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
+      background-color: #fafafa;
+    }
+
+    button {
+      padding: 12px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .resultado {
+      background-color: #f9f9f9;
+      padding: 20px;
+      margin-top: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .pedido-box {
+      background-color: #fff;
+      border-radius: 6px;
+      padding: 15px;
+      margin-bottom: 10px;
+      white-space: pre-wrap;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .copiar-btn {
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+
+    .copiar-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .copiado {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .copiado:hover {
+      background-color: #218838;
+    }
+
+    .no-items {
+      text-align: center;
+      color: #888;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Filtro MC - Cole as cotações recebidas via WhatsApp</h2>
+
+  <textarea id="entrada" placeholder="Cole aqui as mensagens recebidas..."></textarea><br>
+  <button onclick="filtrar()">Filtrar</button>
+
+  <div id="resultados"></div>
+</div>
+
+<script>
+function filtrar() {
+  const entrada = document.getElementById("entrada").value;
+  const blocos = entrada.split(/\*Cotação Mercado Couto\*/i).filter(b => b.trim());
+  const fornecedores = [];
+
+  for (const bloco of blocos) {
+    const empresa = (bloco.match(/\*Empresa:\*\s*(.*)/i) || [])[1]?.trim();
+    const entrega = (bloco.match(/\*Entrega:\*\s*(.*)/i) || [])[1]?.trim();
+
+    const itens = [...bloco.matchAll(/(?:📦)?\s*\*?(.+?)\*?\s*[\r\n]+Marca:\s*(.+?)\s*[\r\n]+Qtd:\s*(\d+)\s*[\r\n]+Valor unitário:\s*R\$\s*([\d,.]+)\s*[\r\n]+Subtotal:\s*R\$\s*([\d,.]+)/gi)]
+      .map(m => ({
+        produto: m[1].trim(),
+        marca: m[2].trim(),
+        quantidade: parseInt(m[3]),
+        valor: parseFloat(m[4].replace(',', '.')),
+        subtotal: parseFloat(m[5].replace(',', '.')),
+        empresa,
+        entrega
+      }));
+
+    if (empresa && itens.length) {
+      fornecedores.push({ empresa, entrega, itens });
+    }
+  }
+
+  if (fornecedores.length === 0) {
+    document.getElementById("resultados").innerHTML = "<p class='no-items'><strong>Nenhum item encontrado nas mensagens.</strong></p>";
+    return;
+  }
+
+  // Agrupa os produtos para escolher os melhores
+  const produtosMap = new Map();
+  for (const fornecedor of fornecedores) {
+    for (const item of fornecedor.itens) {
+      const key = item.produto.toLowerCase();
+      if (!produtosMap.has(key)) produtosMap.set(key, []);
+      produtosMap.get(key).push(item);
+    }
+  }
+
+  const melhores = [];
+  for (const [produto, lista] of produtosMap.entries()) {
+    const melhoresValores = lista.sort((a, b) =>
+      a.valor - b.valor ||
+      a.marca.localeCompare(b.marca) ||
+      new Date(a.entrega) - new Date(b.entrega)
+    );
+    melhores.push(melhoresValores[0]);
+  }
+
+  // Agrupa os melhores por empresa
+  const pedidosPorEmpresa = {};
+  for (const item of melhores) {
+    if (!pedidosPorEmpresa[item.empresa]) pedidosPorEmpresa[item.empresa] = [];
+    pedidosPorEmpresa[item.empresa].push(item);
+  }
+
+  // Exibe os resultados
+  const div = document.getElementById("resultados");
+  div.innerHTML = "";
+
+  for (const [empresa, itens] of Object.entries(pedidosPorEmpresa)) {
+    const box = document.createElement("div");
+    box.className = "resultado";
+
+    let total = 0;
+    let pedidoTexto = `🛒 *Pedido Mercado Couto*\n\n*Empresa:* ${empresa}\n`;
+
+    for (const item of itens) {
+      total += item.subtotal;
+      pedidoTexto += `\n📦 *${item.produto}*\nMarca: ${item.marca}\nQtd: ${item.quantidade}\nValor unitário: R$ ${item.valor.toFixed(2).replace('.', ',')}\nSubtotal: R$ ${item.subtotal.toFixed(2).replace('.', ',')}\n`;
+    }
+
+    pedidoTexto += `\n*Total:* R$ ${total.toFixed(2).replace('.', ',')}`;
+
+    const pedidoPre = document.createElement("pre");
+    pedidoPre.className = "pedido-box";
+    pedidoPre.textContent = pedidoTexto;
+
+    const botao = document.createElement("button");
+    botao.textContent = "Copiar";
+    botao.className = "copiar-btn";
+    botao.onclick = () => {
+      navigator.clipboard.writeText(pedidoTexto);
+      botao.classList.add("copiado");
+      botao.textContent = "Copiado!";
+      setTimeout(() => {
+        botao.classList.remove("copiado");
+        botao.textContent = "Copiar";
+      }, 2000);
+    };
+
+    box.appendChild(pedidoPre);
+    box.appendChild(botao);
+    div.appendChild(box);
+  }
+}
+</script>
+
+</body>
+</html>
