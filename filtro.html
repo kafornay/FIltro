@@ -1,223 +1,184 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Filtro MC</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f0f4f8;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      color: #333;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtro de Cotação</title>
+    <style>
+        /* Reset geral */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    h2 {
-      font-size: 24px;
-      color: #4CAF50;
-      margin-bottom: 20px;
-    }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            padding: 20px;
+        }
 
-    .container {
-      background-color: #fff;
-      border-radius: 8px;
-      padding: 30px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      max-width: 800px;
-      width: 100%;
-    }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
 
-    textarea {
-      width: 100%;
-      height: 150px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 12px;
-      font-size: 16px;
-      margin-bottom: 20px;
-      resize: vertical;
-      box-sizing: border-box;
-      font-family: 'Arial', sans-serif;
-      background-color: #fafafa;
-    }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
 
-    button {
-      padding: 12px 20px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s;
-    }
+        .filter-section {
+            margin-bottom: 20px;
+        }
 
-    button:hover {
-      background-color: #45a049;
-    }
+        .filter-section input,
+        .filter-section button {
+            padding: 10px;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
 
-    .resultado {
-      background-color: #f9f9f9;
-      padding: 20px;
-      margin-top: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
+        .filter-section button {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
 
-    .pedido-box {
-      background-color: #fff;
-      border-radius: 6px;
-      padding: 15px;
-      margin-bottom: 10px;
-      white-space: pre-wrap;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+        .filter-section button:hover {
+            background-color: #45a049;
+        }
 
-    .copiar-btn {
-      padding: 10px 20px;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: background-color 0.3s;
-    }
+        .message-section {
+            margin-top: 30px;
+        }
 
-    .copiar-btn:hover {
-      background-color: #0056b3;
-    }
+        .message-item {
+            background-color: #fafafa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
 
-    .copiado {
-      background-color: #28a745;
-      color: white;
-    }
+        .message-item p {
+            margin: 5px 0;
+        }
 
-    .copiado:hover {
-      background-color: #218838;
-    }
+        .message-item .total {
+            font-weight: bold;
+            color: #2c6d34;
+        }
 
-    .no-items {
-      text-align: center;
-      color: #888;
-      font-size: 18px;
-    }
-  </style>
+        .copy-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #009688;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        .copy-button:hover {
+            background-color: #00796b;
+        }
+
+        /* Ajustes para telas pequenas */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .message-item {
+                padding: 10px;
+            }
+
+            .filter-section input,
+            .filter-section button {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>Filtro MC - Cole as cotações recebidas via WhatsApp</h2>
+    <h1>Filtro de Cotação</h1>
 
-  <textarea id="entrada" placeholder="Cole aqui as mensagens recebidas..."></textarea><br>
-  <button onclick="filtrar()">Filtrar</button>
+    <!-- Filtro -->
+    <div class="filter-section">
+        <input type="text" id="messageInput" placeholder="Cole a cotação aqui..." />
+        <button onclick="filterMessages()">Filtrar</button>
+    </div>
 
-  <div id="resultados"></div>
+    <!-- Mensagens filtradas -->
+    <div class="message-section" id="messageSection"></div>
 </div>
 
+<!-- Script para manipulação -->
 <script>
-function filtrar() {
-  const entrada = document.getElementById("entrada").value;
-  const blocos = entrada.split(/\*Cotação Mercado Couto\*/i).filter(b => b.trim());
-  const fornecedores = [];
+    function filterMessages() {
+        const input = document.getElementById('messageInput').value;
+        const messages = input.split('\n');
+        
+        let company = '';
+        let products = [];
+        let total = 0;
+        
+        let outputHtml = '';
 
-  for (const bloco of blocos) {
-    const empresa = (bloco.match(/\*Empresa:\*\s*(.*)/i) || [])[1]?.trim();
-    const entrega = (bloco.match(/\*Entrega:\*\s*(.*)/i) || [])[1]?.trim();
+        messages.forEach(line => {
+            if (line.includes('Empresa:')) {
+                company = line.split('Empresa:')[1].trim();
+            }
+            if (line.includes('Marca:')) {
+                const product = {};
+                const match = line.match(/([a-zA-Z\s]+)\s+Marca:\s+([a-zA-Z\s]+)\s+Qtd:\s+(\d+)\s+Valor\s+unitário:\s+R\$ ([\d,\.]+)/);
+                if (match) {
+                    product.name = match[1];
+                    product.brand = match[2];
+                    product.quantity = parseInt(match[3]);
+                    product.unitPrice = parseFloat(match[4].replace(',', '.'));
+                    product.subTotal = product.quantity * product.unitPrice;
+                    products.push(product);
+                    total += product.subTotal;
+                }
+            }
+        });
 
-    const itens = [...bloco.matchAll(/(?:📦)?\s*\*?(.+?)\*?\s*[\r\n]+Marca:\s*(.+?)\s*[\r\n]+Qtd:\s*(\d+)\s*[\r\n]+Valor unitário:\s*R\$\s*([\d,.]+)\s*[\r\n]+Subtotal:\s*R\$\s*([\d,.]+)/gi)]
-      .map(m => ({
-        produto: m[1].trim(),
-        marca: m[2].trim(),
-        quantidade: parseInt(m[3]),
-        valor: parseFloat(m[4].replace(',', '.')),
-        subtotal: parseFloat(m[5].replace(',', '.')),
-        empresa,
-        entrega
-      }));
+        // Gerar HTML de saída
+        if (company && products.length > 0) {
+            outputHtml += `<div class="message-item"><p><strong>Empresa:</strong> ${company}</p>`;
+            products.forEach(product => {
+                outputHtml += `
+                    <p><strong>${product.name}</strong> (Marca: ${product.brand})</p>
+                    <p>Quantidade: ${product.quantity} | Preço unitário: R$ ${product.unitPrice.toFixed(2)} | Subtotal: R$ ${product.subTotal.toFixed(2)}</p>
+                `;
+            });
+            outputHtml += `<p class="total">Total Geral: R$ ${total.toFixed(2)}</p>`;
+            outputHtml += `<a href="https://wa.me/5521992576333?text=Pedido%20da%20${encodeURIComponent(company)}" class="copy-button" target="_blank">Enviar via WhatsApp</a></div>`;
+        } else {
+            outputHtml = '<p>Nenhum item encontrado nas mensagens.</p>';
+        }
 
-    if (empresa && itens.length) {
-      fornecedores.push({ empresa, entrega, itens });
+        document.getElementById('messageSection').innerHTML = outputHtml;
     }
-  }
-
-  if (fornecedores.length === 0) {
-    document.getElementById("resultados").innerHTML = "<p class='no-items'><strong>Nenhum item encontrado nas mensagens.</strong></p>";
-    return;
-  }
-
-  // Agrupa os produtos para escolher os melhores
-  const produtosMap = new Map();
-  for (const fornecedor of fornecedores) {
-    for (const item of fornecedor.itens) {
-      const key = item.produto.toLowerCase();
-      if (!produtosMap.has(key)) produtosMap.set(key, []);
-      produtosMap.get(key).push(item);
-    }
-  }
-
-  const melhores = [];
-  for (const [produto, lista] of produtosMap.entries()) {
-    const melhoresValores = lista.sort((a, b) =>
-      a.valor - b.valor ||
-      a.marca.localeCompare(b.marca) ||
-      new Date(a.entrega) - new Date(b.entrega)
-    );
-    melhores.push(melhoresValores[0]);
-  }
-
-  // Agrupa os melhores por empresa
-  const pedidosPorEmpresa = {};
-  for (const item of melhores) {
-    if (!pedidosPorEmpresa[item.empresa]) pedidosPorEmpresa[item.empresa] = [];
-    pedidosPorEmpresa[item.empresa].push(item);
-  }
-
-  // Exibe os resultados
-  const div = document.getElementById("resultados");
-  div.innerHTML = "";
-
-  for (const [empresa, itens] of Object.entries(pedidosPorEmpresa)) {
-    const box = document.createElement("div");
-    box.className = "resultado";
-
-    let total = 0;
-    let pedidoTexto = `🛒 *Pedido Mercado Couto*\n\n*Empresa:* ${empresa}\n`;
-
-    for (const item of itens) {
-      total += item.subtotal;
-      pedidoTexto += `\n📦 *${item.produto}*\nMarca: ${item.marca}\nQtd: ${item.quantidade}\nValor unitário: R$ ${item.valor.toFixed(2).replace('.', ',')}\nSubtotal: R$ ${item.subtotal.toFixed(2).replace('.', ',')}\n`;
-    }
-
-    pedidoTexto += `\n*Total:* R$ ${total.toFixed(2).replace('.', ',')}`;
-
-    const pedidoPre = document.createElement("pre");
-    pedidoPre.className = "pedido-box";
-    pedidoPre.textContent = pedidoTexto;
-
-    const botao = document.createElement("button");
-    botao.textContent = "Copiar";
-    botao.className = "copiar-btn";
-    botao.onclick = () => {
-      navigator.clipboard.writeText(pedidoTexto);
-      botao.classList.add("copiado");
-      botao.textContent = "Copiado!";
-      setTimeout(() => {
-        botao.classList.remove("copiado");
-        botao.textContent = "Copiar";
-      }, 2000);
-    };
-
-    box.appendChild(pedidoPre);
-    box.appendChild(botao);
-    div.appendChild(box);
-  }
-}
 </script>
 
 </body>
