@@ -65,11 +65,12 @@
     <h2>Filtro de Melhores Preços</h2>
     <textarea id="cotacao" placeholder="Cole aqui as cotações..."></textarea>
     <button onclick="adicionarCotacao()">Adicionar</button>
-    <button onclick="filtrarMelhoresPrecos()">Filtrar Melhores Preços</button>
 
     <div id="listaCotacoes"></div>
     <hr />
     <div id="resultado"></div>
+
+    <button onclick="filtrarMelhoresPrecos()">Filtrar Melhores Preços</button>
   </div>
 
   <script>
@@ -79,9 +80,13 @@
       const texto = document.getElementById('cotacao').value.trim();
       if (!texto) return;
       cotacoes.push(texto);
+
+      const empresaMatch = texto.match(/\*Empresa:\* (.+)/);
+      const nomeEmpresa = empresaMatch ? empresaMatch[1].trim() : 'Empresa não identificada';
+
       const div = document.createElement('div');
       div.className = 'item-card';
-      div.textContent = texto.split('\n')[1] || 'Cotação adicionada';
+      div.textContent = `Cotação de: ${nomeEmpresa}`;
       document.getElementById('listaCotacoes').appendChild(div);
       document.getElementById('cotacao').value = '';
     }
