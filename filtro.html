@@ -207,21 +207,25 @@
         });
       });
 
-      // Agrupar por fornecedor
-      precosMap.forEach(({ empresa, texto }) => {
-        if (!fornecedores[empresa]) fornecedores[empresa] = [];
-        fornecedores[empresa].push(texto);
+      // Agrupar por fornecedor e calcular o total
+      precosMap.forEach(({ empresa, valor, texto }) => {
+        if (!fornecedores[empresa]) {
+          fornecedores[empresa] = { itens: [], total: 0 };
+        }
+        fornecedores[empresa].itens.push(texto);
+        fornecedores[empresa].total += valor;
       });
 
       // Renderizar resultado
       const resultadoDiv = document.getElementById('resultado');
       resultadoDiv.innerHTML = '';
-      for (let [empresa, itens] of Object.entries(fornecedores)) {
+      for (let [empresa, dados] of Object.entries(fornecedores)) {
         const div = document.createElement('div');
         div.className = 'fornecedor';
-        div.innerHTML = `<h3>${empresa}</h3><ul>${itens.map(i => `<li>${i.replace(/\n/g, '<br>')}</li>`).join('')}</ul>`;
-        const msg = encodeURIComponent(`Pedido ${empresa}:\n` + itens.join('\n\n'));
-        div.innerHTML += `<a class='whatsapp' href='https://wa.me/?text=${msg}' target='_blank'>Compartilhar via WhatsApp</a>`;
+        div.innerHTML = `<h3>${empresa}</h3><ul>${dados.itens.map(i => `<li>${i.replace(/\n/g, '<br>')}</li>`).join('')}</ul>`;
+        const totalFormatado = dados.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const msg = encodeURIComponent(`Pedido ${empresa}:\n` + dados.itens.join('\n\n') + `\nTotal: ${totalFormatado}`);
+        div.innerHTML += `<a class='whatsapp' href='https://wa.me/?text=${msg}' target='_blank'>Compartilhar via WhatsApp (${totalFormatado})</a>`;
         resultadoDiv.appendChild(div);
       }
     }
