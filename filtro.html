@@ -121,9 +121,28 @@
 <div class="container">
     <h1>Filtro de Cotação</h1>
 
-    <!-- Filtro -->
+    <!-- Filtro por fornecedor -->
     <div class="filter-section">
-        <input type="text" id="messageInput" placeholder="Cole a cotação aqui..." />
+        <h3>Cole as cotações por fornecedor:</h3>
+
+        <label for="fornecedor1">Fornecedor 1:</label>
+        <textarea id="fornecedor1" placeholder="Cole a cotação do Fornecedor 1"></textarea>
+
+        <label for="fornecedor2">Fornecedor 2:</label>
+        <textarea id="fornecedor2" placeholder="Cole a cotação do Fornecedor 2"></textarea>
+
+        <label for="fornecedor3">Fornecedor 3:</label>
+        <textarea id="fornecedor3" placeholder="Cole a cotação do Fornecedor 3"></textarea>
+
+        <label for="fornecedor4">Fornecedor 4:</label>
+        <textarea id="fornecedor4" placeholder="Cole a cotação do Fornecedor 4"></textarea>
+
+        <label for="fornecedor5">Fornecedor 5:</label>
+        <textarea id="fornecedor5" placeholder="Cole a cotação do Fornecedor 5"></textarea>
+
+        <label for="fornecedor6">Fornecedor 6:</label>
+        <textarea id="fornecedor6" placeholder="Cole a cotação do Fornecedor 6"></textarea>
+
         <button onclick="filterMessages()">Filtrar</button>
     </div>
 
@@ -134,46 +153,54 @@
 <!-- Script para manipulação -->
 <script>
     function filterMessages() {
-        const input = document.getElementById('messageInput').value;
-        const messages = input.split('\n');
-        
-        let company = '';
-        let products = [];
-        let total = 0;
-        
-        let outputHtml = '';
-
-        messages.forEach(line => {
-            if (line.includes('Empresa:')) {
-                company = line.split('Empresa:')[1].trim();
+        let messages = [];
+        for (let i = 1; i <= 6; i++) {
+            const message = document.getElementById(`fornecedor${i}`).value.trim();
+            if (message) {
+                messages.push({ fornecedor: `Fornecedor ${i}`, message });
             }
-            if (line.includes('Marca:')) {
-                const product = {};
-                const match = line.match(/([a-zA-Z\s]+)\s+Marca:\s+([a-zA-Z\s]+)\s+Qtd:\s+(\d+)\s+Valor\s+unitário:\s+R\$ ([\d,\.]+)/);
-                if (match) {
-                    product.name = match[1];
-                    product.brand = match[2];
-                    product.quantity = parseInt(match[3]);
-                    product.unitPrice = parseFloat(match[4].replace(',', '.'));
-                    product.subTotal = product.quantity * product.unitPrice;
-                    products.push(product);
-                    total += product.subTotal;
+        }
+
+        let outputHtml = '';
+        messages.forEach(data => {
+            const message = data.message.split('\n');
+            let company = '';
+            let products = [];
+            let total = 0;
+
+            message.forEach(line => {
+                if (line.includes('Empresa:')) {
+                    company = line.split('Empresa:')[1].trim();
                 }
+                if (line.includes('Marca:')) {
+                    const product = {};
+                    const match = line.match(/([a-zA-Z\s]+)\s+Marca:\s+([a-zA-Z\s]+)\s+Qtd:\s+(\d+)\s+Valor\s+unitário:\s+R\$ ([\d,\.]+)/);
+                    if (match) {
+                        product.name = match[1];
+                        product.brand = match[2];
+                        product.quantity = parseInt(match[3]);
+                        product.unitPrice = parseFloat(match[4].replace(',', '.'));
+                        product.subTotal = product.quantity * product.unitPrice;
+                        products.push(product);
+                        total += product.subTotal;
+                    }
+                }
+            });
+
+            if (company && products.length > 0) {
+                outputHtml += `<div class="message-item"><h4>${data.fornecedor} - ${company}</h4>`;
+                products.forEach(product => {
+                    outputHtml += `
+                        <p><strong>${product.name}</strong> (Marca: ${product.brand})</p>
+                        <p>Quantidade: ${product.quantity} | Preço unitário: R$ ${product.unitPrice.toFixed(2)} | Subtotal: R$ ${product.subTotal.toFixed(2)}</p>
+                    `;
+                });
+                outputHtml += `<p class="total">Total Geral: R$ ${total.toFixed(2)}</p>`;
+                outputHtml += `<a href="https://wa.me/5521992576333?text=Pedido%20da%20${encodeURIComponent(company)}" class="copy-button" target="_blank">Enviar via WhatsApp</a></div>`;
             }
         });
 
-        // Gerar HTML de saída
-        if (company && products.length > 0) {
-            outputHtml += `<div class="message-item"><p><strong>Empresa:</strong> ${company}</p>`;
-            products.forEach(product => {
-                outputHtml += `
-                    <p><strong>${product.name}</strong> (Marca: ${product.brand})</p>
-                    <p>Quantidade: ${product.quantity} | Preço unitário: R$ ${product.unitPrice.toFixed(2)} | Subtotal: R$ ${product.subTotal.toFixed(2)}</p>
-                `;
-            });
-            outputHtml += `<p class="total">Total Geral: R$ ${total.toFixed(2)}</p>`;
-            outputHtml += `<a href="https://wa.me/5521992576333?text=Pedido%20da%20${encodeURIComponent(company)}" class="copy-button" target="_blank">Enviar via WhatsApp</a></div>`;
-        } else {
+        if (outputHtml === '') {
             outputHtml = '<p>Nenhum item encontrado nas mensagens.</p>';
         }
 
