@@ -1,113 +1,90 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Cotação - Mercado Couto</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f4f7fc;
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
       margin: 0;
       padding: 20px;
     }
 
     h1 {
       text-align: center;
-      color: #f39c12;
-      font-size: 2rem;
-      margin-bottom: 20px;
+      color: #e67e22;
     }
 
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
+    .formulario, .container {
+      max-width: 800px;
+      margin: 0 auto;
+      margin-top: 20px;
+    }
+
+    .formulario input, .formulario button {
+      padding: 10px;
+      margin: 5px;
+      width: calc(100% - 22px);
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .formulario button {
+      background-color: #27ae60;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .formulario button:hover {
+      background-color: #1e8449;
     }
 
     .fornecedor-box {
-      background: #fff;
+      background-color: #fff;
       border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 400px;
-      padding: 20px;
+      padding: 15px;
       margin-bottom: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
 
     .fornecedor-box h3 {
       color: #e67e22;
-      margin-bottom: 10px;
     }
 
     .fornecedor-box ul {
       list-style: none;
       padding: 0;
-      margin-bottom: 20px;
     }
 
-    .fornecedor-box ul li {
-      background: #fafafa;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    }
-
-    .fornecedor-box ul li strong {
-      color: #2c3e50;
+    .fornecedor-box li {
+      background-color: #f9f9f9;
+      padding: 8px;
+      margin: 5px 0;
+      border-radius: 5px;
     }
 
     .total-price {
       font-weight: bold;
-      color: #e74c3c;
-      text-align: center;
+      color: #c0392b;
       margin-top: 10px;
     }
 
     .whatsapp-btn {
-      display: block;
+      display: inline-block;
+      margin-top: 10px;
       background-color: #25d366;
-      color: #fff;
-      text-align: center;
-      padding: 12px;
-      border-radius: 8px;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 5px;
       text-decoration: none;
-      font-weight: bold;
-      margin-top: 15px;
     }
 
     .whatsapp-btn:hover {
       background-color: #128c7e;
-    }
-
-    .filter-container {
-      margin-bottom: 30px;
-      text-align: center;
-    }
-
-    .filter-container input {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      width: 250px;
-      font-size: 1rem;
-    }
-
-    .filter-container button {
-      padding: 10px 15px;
-      background-color: #f39c12;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1rem;
-      margin-left: 10px;
-    }
-
-    .filter-container button:hover {
-      background-color: #e67e22;
     }
   </style>
 </head>
@@ -115,190 +92,85 @@
 
   <h1>🛒 Cotação Mercado Couto</h1>
 
-  <div class="filter-container">
-    <input type="text" id="searchInput" placeholder="Pesquisar por produto..." />
-    <button onclick="filterData()">Filtrar</button>
+  <div class="formulario">
+    <input type="text" id="empresa" placeholder="Nome da empresa">
+    <input type="date" id="entrega" placeholder="Data de entrega">
+    <input type="text" id="produto" placeholder="Produto">
+    <input type="text" id="marca" placeholder="Marca">
+    <input type="number" id="qtd" placeholder="Quantidade">
+    <input type="number" id="valor" placeholder="Valor unitário (ex: 4.99)" step="0.01">
+    <button onclick="adicionarItem()">Adicionar Item</button>
   </div>
 
-  <div class="container" id="fornecedorContainer">
-    <!-- As caixas de fornecedores serão geradas aqui dinamicamente -->
+  <div class="container" id="listaFornecedores">
+    <!-- Itens serão inseridos aqui -->
   </div>
 
   <script>
-    const dados = [
-      {
-        empresa: "Atlas Rio",
-        entrega: "2025-05-16",
-        itens: [
-          { produto: "arroz 1kg", marca: "RECKIT vanish sachê refil 500ml", qtd: 6, valorUnit: 6.29 },
-          { produto: "arroz 1kg", marca: "Leite condensado TP triângulo", qtd: 27, valorUnit: 4.99 },
-          { produto: "Leite ninho lata", marca: "Nestlé", qtd: 24, valorUnit: 15.95 },
-          { produto: "café 250g", marca: "União", qtd: 10, valorUnit: 15.99 }
-        ]
-      },
-      {
-        empresa: "Menezes",
-        entrega: "2025-05-17",
-        itens: [
-          { produto: "arroz 1kg", marca: "Leite Moça", qtd: 15, valorUnit: 5.49 },
-          { produto: "Leite ninho lata", marca: "Nestlé", qtd: 12, valorUnit: 16.99 },
-          { produto: "café 250g", marca: "Café Pilão", qtd: 8, valorUnit: 12.99 }
-        ]
+    const fornecedores = {};
+
+    function adicionarItem() {
+      const empresa = document.getElementById('empresa').value.trim();
+      const entrega = document.getElementById('entrega').value;
+      const produto = document.getElementById('produto').value.trim();
+      const marca = document.getElementById('marca').value.trim();
+      const qtd = parseInt(document.getElementById('qtd').value);
+      const valor = parseFloat(document.getElementById('valor').value);
+
+      if (!empresa || !entrega || !produto || !marca || !qtd || !valor) {
+        alert('Preencha todos os campos corretamente.');
+        return;
       }
-    ];
 
-    function generateFornecedorBoxes() {
-      const container = document.getElementById('fornecedorContainer');
-      container.innerHTML = ''; // Limpa o conteúdo atual
+      if (!fornecedores[empresa]) {
+        fornecedores[empresa] = {
+          entrega,
+          itens: []
+        };
+      }
 
-      dados.forEach((fornecedorData) => {
-        const { empresa, entrega, itens } = fornecedorData;
+      fornecedores[empresa].itens.push({ produto, marca, qtd, valor });
 
-        // Filtra os melhores preços, sem repetir os itens
-        const itemsMap = {};
-        const bestItems = itens.filter(item => {
-          const key = `${item.produto} - ${item.marca}`;
-          if (!itemsMap[key]) {
-            itemsMap[key] = item;
-            return true;
-          }
-          return false;
-        });
+      renderizar();
+      limparCampos();
+    }
 
-        // Criação da caixa de fornecedor
+    function limparCampos() {
+      ['produto', 'marca', 'qtd', 'valor'].forEach(id => document.getElementById(id).value = '');
+    }
+
+    function renderizar() {
+      const container = document.getElementById('listaFornecedores');
+      container.innerHTML = '';
+
+      Object.entries(fornecedores).forEach(([empresa, dados]) => {
+        const { entrega, itens } = dados;
         const box = document.createElement('div');
-        box.classList.add('fornecedor-box');
+        box.className = 'fornecedor-box';
 
-        const title = document.createElement('h3');
-        title.textContent = empresa;
-        box.appendChild(title);
-
-        const entregaText = document.createElement('p');
-        entregaText.textContent = `Entrega: ${entrega}`;
-        box.appendChild(entregaText);
-
-        const list = document.createElement('ul');
         let total = 0;
-        bestItems.forEach(item => {
-          const subtotal = item.qtd * item.valorUnit;
-          total += subtotal;
+        const lista = document.createElement('ul');
 
-          const listItem = document.createElement('li');
-          listItem.innerHTML = `
-            <strong>${item.produto}</strong><br>
-            Marca: ${item.marca}<br>
-            Quantidade: ${item.qtd}<br>
-            Valor unitário: R$ ${item.valorUnit.toFixed(2)}<br>
-            Subtotal: R$ ${subtotal.toFixed(2)}
-          `;
-          list.appendChild(listItem);
+        itens.forEach(({ produto, marca, qtd, valor }) => {
+          const subtotal = qtd * valor;
+          total += subtotal;
+          const item = document.createElement('li');
+          item.innerHTML = `<strong>${produto}</strong><br>Marca: ${marca}<br>Qtd: ${qtd}<br>Valor: R$ ${valor.toFixed(2)}<br>Subtotal: R$ ${subtotal.toFixed(2)}`;
+          lista.appendChild(item);
         });
 
-        box.appendChild(list);
+        const mensagem = encodeURIComponent(`🛒 *Cotação Mercado Couto*\n*Empresa:* ${empresa}\n*Entrega:* ${entrega}\n\n` +
+          itens.map(i => `📦 *${i.produto}*\nMarca: ${i.marca}\nQtd: ${i.qtd}\nValor: R$ ${i.valor.toFixed(2)}\nSubtotal: R$ ${(i.qtd * i.valor).toFixed(2)}\n`).join('\n') +
+          `\n*Total:* R$ ${total.toFixed(2)}`);
 
-        const totalPrice = document.createElement('div');
-        totalPrice.classList.add('total-price');
-        totalPrice.textContent = `Total geral: R$ ${total.toFixed(2)}`;
-        box.appendChild(totalPrice);
-
-        const whatsappButton = document.createElement('a');
-        whatsappButton.href = `https://wa.me/5521992576333?text=${encodeURIComponent(generateMessage(empresa, entrega, bestItems, total))}`;
-        whatsappButton.classList.add('whatsapp-btn');
-        whatsappButton.textContent = "Compartilhar via WhatsApp";
-        box.appendChild(whatsappButton);
+        box.innerHTML = `<h3>${empresa}</h3><p>Entrega: ${entrega}</p>`;
+        box.appendChild(lista);
+        box.innerHTML += `<div class="total-price">Total geral: R$ ${total.toFixed(2)}</div>`;
+        box.innerHTML += `<a class="whatsapp-btn" href="https://wa.me/5521992576333?text=${mensagem}" target="_blank">Compartilhar via WhatsApp</a>`;
 
         container.appendChild(box);
       });
     }
-
-    function generateMessage(empresa, entrega, items, total) {
-      let message = `🛒 *Cotação Mercado Couto*\n\n*Empresa:* ${empresa}\n*Entrega:* ${entrega}\n\n`;
-      items.forEach(item => {
-        const subtotal = item.qtd * item.valorUnit;
-        message += `📦 *${item.produto}*\nMarca: ${item.marca}\nQtd: ${item.qtd}\nValor unitário: R$ ${item.valorUnit.toFixed(2)}\nSubtotal: R$ ${subtotal.toFixed(2)}\n\n`;
-      });
-      message += `*Total geral:* R$ ${total.toFixed(2)}`;
-      return message;
-    }
-
-    function filterData() {
-      const searchInput = document.getElementById('searchInput').value.toLowerCase();
-      const filteredData = dados.map(fornecedor => {
-        const filteredItems = fornecedor.itens.filter(item =>
-          item.produto.toLowerCase().includes(searchInput) || item.marca.toLowerCase().includes(searchInput)
-        );
-        return { ...fornecedor, itens: filteredItems };
-      }).filter(fornecedor => fornecedor.itens.length > 0);
-
-      updateFornecedorBoxes(filteredData);
-    }
-
-    function updateFornecedorBoxes(filteredData) {
-      const container = document.getElementById('fornecedorContainer');
-      container.innerHTML = ''; // Limpa o conteúdo atual
-
-      filteredData.forEach((fornecedorData) => {
-        const { empresa, entrega, itens } = fornecedorData;
-
-        // Filtra os melhores preços, sem repetir os itens
-        const itemsMap = {};
-        const bestItems = itens.filter(item => {
-          const key = `${item.produto} - ${item.marca}`;
-          if (!itemsMap[key]) {
-            itemsMap[key] = item;
-            return true;
-          }
-          return false;
-        });
-
-        // Criação da caixa de fornecedor
-        const box = document.createElement('div');
-        box.classList.add('fornecedor-box');
-
-        const title = document.createElement('h3');
-        title.textContent = empresa;
-        box.appendChild(title);
-
-        const entregaText = document.createElement('p');
-        entregaText.textContent = `Entrega: ${entrega}`;
-        box.appendChild(entregaText);
-
-        const list = document.createElement('ul');
-        let total = 0;
-        bestItems.forEach(item => {
-          const subtotal = item.qtd * item.valorUnit;
-          total += subtotal;
-
-          const listItem = document.createElement('li');
-          listItem.innerHTML = `
-            <strong>${item.produto}</strong><br>
-            Marca: ${item.marca}<br>
-            Quantidade: ${item.qtd}<br>
-            Valor unitário: R$ ${item.valorUnit.toFixed(2)}<br>
-            Subtotal: R$ ${subtotal.toFixed(2)}
-          `;
-          list.appendChild(listItem);
-        });
-
-        box.appendChild(list);
-
-        const totalPrice = document.createElement('div');
-        totalPrice.classList.add('total-price');
-        totalPrice.textContent = `Total geral: R$ ${total.toFixed(2)}`;
-        box.appendChild(totalPrice);
-
-        const whatsappButton = document.createElement('a');
-        whatsappButton.href = `https://wa.me/5521992576333?text=${encodeURIComponent(generateMessage(empresa, entrega, bestItems, total))}`;
-        whatsappButton.classList.add('whatsapp-btn');
-        whatsappButton.textContent = "Compartilhar via WhatsApp";
-        box.appendChild(whatsappButton);
-
-        container.appendChild(box);
-      });
-    }
-
-    // Inicializa com os dados completos
-    generateFornecedorBoxes();
   </script>
 
 </body>
