@@ -6,364 +6,299 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f7fc;
       margin: 0;
-      padding-bottom: 80px; /* espaço para o botão fixo */
-    }
-
-    .container {
-      max-width: 650px;
-      margin: auto;
-      background: #fff;
       padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      margin-top: 20px;
     }
 
     h1 {
       text-align: center;
-      color: #d35400;
+      color: #f39c12;
+      font-size: 2rem;
+      margin-bottom: 20px;
     }
 
-    .field {
-      margin-bottom: 15px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    #addItem {
-      background-color: #d35400;
-      color: #fff;
-      margin-top: 10px;
-    }
-
-    #addItem:hover {
-      background-color: #e67e22;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: left;
-    }
-
-    th {
-      background-color: #f3f3f3;
-    }
-
-    .removeBtn {
-      background: none;
-      color: #e74c3c;
-      font-size: 1.1rem;
-      border: none;
-      cursor: pointer;
-    }
-
-    #totalDisplay {
-      text-align: right;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-
-    #sendData {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 40px);
-      max-width: 650px;
-      background-color: #27ae60;
-      color: white;
-      z-index: 999;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-
-    #sendData:hover {
-      background-color: #2ecc71;
-    }
-
-    .filterBox {
+    .container {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 20px;
+      gap: 20px;
+      justify-content: center;
     }
 
-    .filterBox .box {
-      background: #f8f8f8;
+    .fornecedor-box {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
       padding: 20px;
-      border-radius: 8px;
-      width: 100%;
-      max-width: 290px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
     }
 
-    .filterBox .box h3 {
-      color: #d35400;
-      font-size: 1.2rem;
-    }
-
-    .filterBox .box button {
-      background-color: #27ae60;
-      color: white;
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      font-size: 1rem;
-    }
-
-    .filterBox .box button:hover {
-      background-color: #2ecc71;
-    }
-
-    .filterBox .box .item {
+    .fornecedor-box h3 {
+      color: #e67e22;
       margin-bottom: 10px;
     }
 
-    .filterBox .box .item span {
+    .fornecedor-box ul {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 20px;
+    }
+
+    .fornecedor-box ul li {
+      background: #fafafa;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .fornecedor-box ul li strong {
+      color: #2c3e50;
+    }
+
+    .total-price {
       font-weight: bold;
+      color: #e74c3c;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .whatsapp-btn {
+      display: block;
+      background-color: #25d366;
+      color: #fff;
+      text-align: center;
+      padding: 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .whatsapp-btn:hover {
+      background-color: #128c7e;
+    }
+
+    .filter-container {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .filter-container input {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 250px;
+      font-size: 1rem;
+    }
+
+    .filter-container button {
+      padding: 10px 15px;
+      background-color: #f39c12;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-left: 10px;
+    }
+
+    .filter-container button:hover {
+      background-color: #e67e22;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <h1>🛒 Cotação - Mercado Couto</h1>
+  <h1>🛒 Cotação Mercado Couto</h1>
 
-    <div class="field">
-      <label for="empresa">Nome da Empresa:</label>
-      <input type="text" id="empresa" placeholder="Digite o nome da sua empresa" required />
-    </div>
-
-    <div class="field">
-      <label for="dataEntrega">Data de Entrega:</label>
-      <input type="date" id="dataEntrega" required />
-    </div>
-
-    <div class="field">
-      <label for="produto">Produto:</label>
-      <select id="produto"></select>
-    </div>
-
-    <div class="field">
-      <label for="marca">Marca:</label>
-      <input type="text" id="marca" />
-    </div>
-
-    <div class="field">
-      <label for="quantidade">Quantidade:</label>
-      <input type="number" id="quantidade" />
-    </div>
-
-    <div class="field">
-      <label for="valor">Valor unitário (R$):</label>
-      <input type="number" id="valor" step="0.01" />
-    </div>
-
-    <button id="addItem">+ Adicionar à Lista</button>
-
-    <table id="listaItens">
-      <thead>
-        <tr>
-          <th>Produto</th>
-          <th>Marca</th>
-          <th>Qtd</th>
-          <th>Total (R$)</th>
-          <th>Remover</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-
-    <div id="totalDisplay"></div>
+  <div class="filter-container">
+    <input type="text" id="searchInput" placeholder="Pesquisar por produto..." />
+    <button onclick="filterData()">Filtrar</button>
   </div>
 
-  <div class="filterBox">
-    <!-- As caixas dos fornecedores serão geradas aqui -->
+  <div class="container" id="fornecedorContainer">
+    <!-- As caixas de fornecedores serão geradas aqui dinamicamente -->
   </div>
-
-  <button id="sendData">Enviar via WhatsApp</button>
 
   <script>
-    const produtoSelect = document.getElementById("produto");
-    const addItemBtn = document.getElementById("addItem");
-    const listaItens = document.getElementById("listaItens").getElementsByTagName('tbody')[0];
-    const sendDataBtn = document.getElementById("sendData");
-    const totalDisplay = document.getElementById("totalDisplay");
-    const filterBox = document.querySelector(".filterBox");
-
-    let itens = JSON.parse(localStorage.getItem('itens')) || [];
-
-    const apiUrl = "https://script.google.com/macros/s/AKfycbxLJAKDj6xrk2pZK2Kst6hGKQZO4OAXx9ZKZIzuT3Qs1Oxv1fKsbpFTQKWTLkLd7DtA7A/exec";
-
-    fetch(apiUrl)
-      .then(res => res.json())
-      .then(data => {
-        data.forEach(item => {
-          const option = document.createElement("option");
-          option.textContent = item.Produto || item.produto;
-          produtoSelect.appendChild(option);
-        });
-      })
-      .catch(err => {
-        console.error("Erro ao carregar produtos:", err);
-        produtoSelect.innerHTML = '<option>Erro ao carregar</option>';
-      });
-
-    function renderLista() {
-      listaItens.innerHTML = "";
-      let total = 0;
-
-      itens.forEach((item, index) => {
-        const subtotal = parseFloat(item.valor) * parseFloat(item.quantidade);
-        total += subtotal;
-
-        const row = listaItens.insertRow();
-        row.innerHTML = `
-          <td>${item.produto}</td>
-          <td>${item.marca}</td>
-          <td>${item.quantidade}</td>
-          <td>R$ ${subtotal.toFixed(2)}</td>
-          <td><button class="removeBtn">X</button></td>
-        `;
-
-        row.querySelector(".removeBtn").addEventListener("click", () => {
-          itens.splice(index, 1);
-          localStorage.setItem('itens', JSON.stringify(itens));
-          renderLista();
-        });
-      });
-
-      totalDisplay.textContent = `Total: R$ ${total.toFixed(2)}`;
-    }
-
-    addItemBtn.addEventListener("click", () => {
-      const produto = produtoSelect.value;
-      const marca = document.getElementById("marca").value;
-      const quantidade = document.getElementById("quantidade").value;
-      const valor = document.getElementById("valor").value;
-
-      if (!marca || !quantidade || !valor) {
-        alert("Preencha todos os campos antes de adicionar.");
-        return;
+    const dados = [
+      {
+        empresa: "Atlas Rio",
+        entrega: "2025-05-16",
+        itens: [
+          { produto: "arroz 1kg", marca: "RECKIT vanish sachê refil 500ml", qtd: 6, valorUnit: 6.29 },
+          { produto: "arroz 1kg", marca: "Leite condensado TP triângulo", qtd: 27, valorUnit: 4.99 },
+          { produto: "Leite ninho lata", marca: "Nestlé", qtd: 24, valorUnit: 15.95 },
+          { produto: "café 250g", marca: "União", qtd: 10, valorUnit: 15.99 }
+        ]
+      },
+      {
+        empresa: "Menezes",
+        entrega: "2025-05-17",
+        itens: [
+          { produto: "arroz 1kg", marca: "Leite Moça", qtd: 15, valorUnit: 5.49 },
+          { produto: "Leite ninho lata", marca: "Nestlé", qtd: 12, valorUnit: 16.99 },
+          { produto: "café 250g", marca: "Café Pilão", qtd: 8, valorUnit: 12.99 }
+        ]
       }
+    ];
 
-      itens.push({ produto, marca, quantidade, valor });
-      localStorage.setItem('itens', JSON.stringify(itens));
+    function generateFornecedorBoxes() {
+      const container = document.getElementById('fornecedorContainer');
+      container.innerHTML = ''; // Limpa o conteúdo atual
 
-      document.getElementById("marca").value = '';
-      document.getElementById("quantidade").value = '';
-      document.getElementById("valor").value = '';
+      dados.forEach((fornecedorData) => {
+        const { empresa, entrega, itens } = fornecedorData;
 
-      renderLista();
-    });
+        // Filtra os melhores preços, sem repetir os itens
+        const itemsMap = {};
+        const bestItems = itens.filter(item => {
+          const key = `${item.produto} - ${item.marca}`;
+          if (!itemsMap[key]) {
+            itemsMap[key] = item;
+            return true;
+          }
+          return false;
+        });
 
-    sendDataBtn.addEventListener("click", () => {
-      const empresa = document.getElementById("empresa").value;
-      const dataEntrega = document.getElementById("dataEntrega").value;
+        // Criação da caixa de fornecedor
+        const box = document.createElement('div');
+        box.classList.add('fornecedor-box');
 
-      if (!empresa || !dataEntrega || itens.length === 0) {
-        alert("Informe o nome da empresa, a data de entrega e adicione ao menos um item.");
-        return;
-      }
-
-      let mensagem = `🛒 *Cotação Mercado Couto*\n\n*Empresa:* ${empresa}\n*Entrega:* ${dataEntrega}\n\n`;
-      let total = 0;
-
-      itens.forEach(item => {
-        const subtotal = parseFloat(item.valor) * parseFloat(item.quantidade);
-        mensagem += `📦 *${item.produto}*\nMarca: ${item.marca}\nQtd: ${item.quantidade}\nValor unitário: R$ ${parseFloat(item.valor).toFixed(2)}\nSubtotal: R$ ${subtotal.toFixed(2)}\n\n`;
-        total += subtotal;
-      });
-
-      mensagem += `*Total geral:* R$ ${total.toFixed(2)}`;
-
-      const numero = "5521992576333";
-      const link = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
-      window.open(link, "_blank");
-    });
-
-    // Função para gerar as caixas dos fornecedores
-    function gerarCaixasFornecedor() {
-      const fornecedores = ['Atlas Rio', 'Nutrymax', 'Unimarka']; // Exemplo de fornecedores
-      fornecedores.forEach(fornecedor => {
-        const box = document.createElement("div");
-        box.classList.add("box");
-
-        const title = document.createElement("h3");
-        title.textContent = fornecedor;
+        const title = document.createElement('h3');
+        title.textContent = empresa;
         box.appendChild(title);
 
-        let totalFornecedor = 0;
+        const entregaText = document.createElement('p');
+        entregaText.textContent = `Entrega: ${entrega}`;
+        box.appendChild(entregaText);
 
-        itens.filter(item => item.marca === fornecedor).forEach(item => {
-          const itemDiv = document.createElement("div");
-          itemDiv.classList.add("item");
-          const subtotal = parseFloat(item.valor) * parseFloat(item.quantidade);
-          totalFornecedor += subtotal;
-          itemDiv.innerHTML = `
-            <span>${item.produto}</span><br>
+        const list = document.createElement('ul');
+        let total = 0;
+        bestItems.forEach(item => {
+          const subtotal = item.qtd * item.valorUnit;
+          total += subtotal;
+
+          const listItem = document.createElement('li');
+          listItem.innerHTML = `
+            <strong>${item.produto}</strong><br>
             Marca: ${item.marca}<br>
-            Quantidade: ${item.quantidade}<br>
+            Quantidade: ${item.qtd}<br>
+            Valor unitário: R$ ${item.valorUnit.toFixed(2)}<br>
             Subtotal: R$ ${subtotal.toFixed(2)}
           `;
-          box.appendChild(itemDiv);
+          list.appendChild(listItem);
         });
 
-        const totalDiv = document.createElement("div");
-        totalDiv.innerHTML = `<strong>Total: R$ ${totalFornecedor.toFixed(2)}</strong>`;
-        box.appendChild(totalDiv);
+        box.appendChild(list);
 
-        const shareButton = document.createElement("button");
-        shareButton.textContent = "Compartilhar via WhatsApp";
-        shareButton.addEventListener("click", () => {
-          const mensagem = `🛒 *Cotação Mercado Couto*\n*Fornecedor:* ${fornecedor}\n`;
-          let total = 0;
-          itens.filter(item => item.marca === fornecedor).forEach(item => {
-            const subtotal = parseFloat(item.valor) * parseFloat(item.quantidade);
-            total += subtotal;
-          });
-          const link = `https://wa.me/${numero}?text=${encodeURIComponent(mensagem + `*Total: R$ ${total.toFixed(2)}`)}`;
-          window.open(link, "_blank");
-        });
+        const totalPrice = document.createElement('div');
+        totalPrice.classList.add('total-price');
+        totalPrice.textContent = `Total geral: R$ ${total.toFixed(2)}`;
+        box.appendChild(totalPrice);
 
-        box.appendChild(shareButton);
-        filterBox.appendChild(box);
+        const whatsappButton = document.createElement('a');
+        whatsappButton.href = `https://wa.me/5521992576333?text=${encodeURIComponent(generateMessage(empresa, entrega, bestItems, total))}`;
+        whatsappButton.classList.add('whatsapp-btn');
+        whatsappButton.textContent = "Compartilhar via WhatsApp";
+        box.appendChild(whatsappButton);
+
+        container.appendChild(box);
       });
     }
 
-    renderLista();
-    gerarCaixasFornecedor();
+    function generateMessage(empresa, entrega, items, total) {
+      let message = `🛒 *Cotação Mercado Couto*\n\n*Empresa:* ${empresa}\n*Entrega:* ${entrega}\n\n`;
+      items.forEach(item => {
+        const subtotal = item.qtd * item.valorUnit;
+        message += `📦 *${item.produto}*\nMarca: ${item.marca}\nQtd: ${item.qtd}\nValor unitário: R$ ${item.valorUnit.toFixed(2)}\nSubtotal: R$ ${subtotal.toFixed(2)}\n\n`;
+      });
+      message += `*Total geral:* R$ ${total.toFixed(2)}`;
+      return message;
+    }
+
+    function filterData() {
+      const searchInput = document.getElementById('searchInput').value.toLowerCase();
+      const filteredData = dados.map(fornecedor => {
+        const filteredItems = fornecedor.itens.filter(item =>
+          item.produto.toLowerCase().includes(searchInput) || item.marca.toLowerCase().includes(searchInput)
+        );
+        return { ...fornecedor, itens: filteredItems };
+      }).filter(fornecedor => fornecedor.itens.length > 0);
+
+      updateFornecedorBoxes(filteredData);
+    }
+
+    function updateFornecedorBoxes(filteredData) {
+      const container = document.getElementById('fornecedorContainer');
+      container.innerHTML = ''; // Limpa o conteúdo atual
+
+      filteredData.forEach((fornecedorData) => {
+        const { empresa, entrega, itens } = fornecedorData;
+
+        // Filtra os melhores preços, sem repetir os itens
+        const itemsMap = {};
+        const bestItems = itens.filter(item => {
+          const key = `${item.produto} - ${item.marca}`;
+          if (!itemsMap[key]) {
+            itemsMap[key] = item;
+            return true;
+          }
+          return false;
+        });
+
+        // Criação da caixa de fornecedor
+        const box = document.createElement('div');
+        box.classList.add('fornecedor-box');
+
+        const title = document.createElement('h3');
+        title.textContent = empresa;
+        box.appendChild(title);
+
+        const entregaText = document.createElement('p');
+        entregaText.textContent = `Entrega: ${entrega}`;
+        box.appendChild(entregaText);
+
+        const list = document.createElement('ul');
+        let total = 0;
+        bestItems.forEach(item => {
+          const subtotal = item.qtd * item.valorUnit;
+          total += subtotal;
+
+          const listItem = document.createElement('li');
+          listItem.innerHTML = `
+            <strong>${item.produto}</strong><br>
+            Marca: ${item.marca}<br>
+            Quantidade: ${item.qtd}<br>
+            Valor unitário: R$ ${item.valorUnit.toFixed(2)}<br>
+            Subtotal: R$ ${subtotal.toFixed(2)}
+          `;
+          list.appendChild(listItem);
+        });
+
+        box.appendChild(list);
+
+        const totalPrice = document.createElement('div');
+        totalPrice.classList.add('total-price');
+        totalPrice.textContent = `Total geral: R$ ${total.toFixed(2)}`;
+        box.appendChild(totalPrice);
+
+        const whatsappButton = document.createElement('a');
+        whatsappButton.href = `https://wa.me/5521992576333?text=${encodeURIComponent(generateMessage(empresa, entrega, bestItems, total))}`;
+        whatsappButton.classList.add('whatsapp-btn');
+        whatsappButton.textContent = "Compartilhar via WhatsApp";
+        box.appendChild(whatsappButton);
+
+        container.appendChild(box);
+      });
+    }
+
+    // Inicializa com os dados completos
+    generateFornecedorBoxes();
   </script>
 
 </body>
