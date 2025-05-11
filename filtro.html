@@ -175,7 +175,7 @@
 
     cotacoes.forEach(cotacao => {
       const precoPorItem = {};
-      
+
       cotacao.itens.forEach(item => {
         if (!precoPorItem[item.produto] || precoPorItem[item.produto].valor > item.valor) {
           precoPorItem[item.produto] = item;
