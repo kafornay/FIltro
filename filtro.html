@@ -9,7 +9,7 @@
     body {
       font-family: 'Roboto', sans-serif;
       margin: 0;
-      background: #f4f6f8; /* Fundo cinza bem claro */
+      background: #f4f6f8;
       color: #333;
     }
     .container {
@@ -21,7 +21,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
     h2 {
-      color: #2c3e50; /* Azul mais escuro */
+      color: #2c3e50;
       text-align: center;
       margin-bottom: 20px;
     }
@@ -41,7 +41,7 @@
       margin-bottom: 10px;
     }
     .input-actions button {
-      background-color: #6c757d; /* Cinza mais escuro para ações secundárias */
+      background-color: #6c757d;
       color: white;
       padding: 8px 12px;
       border: none;
@@ -59,7 +59,7 @@
       margin: 5px;
       border: none;
       border-radius: 6px;
-      background: #2c3e50; /* Azul mais escuro */
+      background: #2c3e50;
       color: white;
       cursor: pointer;
       font-size: 16px;
@@ -77,7 +77,7 @@
     }
     .item-card {
       background: #e6ffe6;
-      border-left: 5px solid #27ae60; /* Verde */
+      border-left: 5px solid #27ae60;
       padding: 12px;
       margin-bottom: 8px;
       border-radius: 4px;
@@ -104,16 +104,8 @@
     }
     .fornecedor h3 {
       margin-top: 0;
-      color: #27ae60; /* Verde */
+      color: #27ae60;
       margin-bottom: 10px;
-    }
-    .fornecedor ul {
-      padding-left: 20px;
-      list-style-type: disc;
-    }
-    .fornecedor li {
-      margin-bottom: 5px;
-      font-size: 15px;
     }
     .whatsapp {
       display: inline-block;
@@ -130,7 +122,39 @@
       background-color: #128c7e;
     }
 
-    /* Estilos para telas menores (mobile) */
+    .cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .produto-card {
+      flex: 1 1 250px;
+      background: #ffffff;
+      border: 1px solid #ddd;
+      border-left: 5px solid #27ae60;
+      padding: 12px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .card-header {
+      font-size: 16px;
+      margin-bottom: 6px;
+      color: #2c3e50;
+    }
+
+    .card-preco {
+      font-weight: bold;
+      color: #27ae60;
+      margin-bottom: 6px;
+    }
+
+    .card-detalhes {
+      font-size: 14px;
+      color: #555;
+    }
+
     @media (max-width: 600px) {
       .container {
         margin: 10px;
@@ -148,24 +172,14 @@
         flex-direction: column;
         gap: 5px;
       }
-      .input-actions button {
-        width: 100%;
-      }
+      .input-actions button,
       button {
-        display: block;
         width: 100%;
-        margin: 5px 0;
-        padding: 10px;
-        font-size: 14px;
-      }
-      .item-card {
         font-size: 14px;
         padding: 10px;
       }
-      .fornecedor h3 {
-        font-size: 1.4em;
-      }
-      .fornecedor li {
+      .item-card,
+      .card-detalhes {
         font-size: 14px;
       }
       .whatsapp {
@@ -177,7 +191,6 @@
       }
     }
   </style>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
@@ -227,7 +240,7 @@
           const linhas = bloco.trim().split('\n');
           const nomeMatch = linhas[0].match(/\*(.+)\*/);
           const nome = nomeMatch ? nomeMatch[1].toLowerCase().trim() : '';
-          const valorMatch = linhas.find(l => l.includes('Valor unitário')).match(/R\$\s*([\d,\.]+)/);
+          const valorMatch = linhas.find(l => l.includes('Valor unitário'))?.match(/R\$\s*([\d,\.]+)/);
           const valor = valorMatch ? parseFloat(valorMatch[1].replace(',', '.')) : Infinity;
 
           if (!nome) return;
@@ -238,20 +251,31 @@
         });
       });
 
-      // Agrupar por fornecedor
-      precosMap.forEach(({ empresa, texto }) => {
-        if (!fornecedores[empresa]) fornecedores[empresa] = [];
-        fornecedores[empresa].push(texto);
-      });
-
-      // Renderizar resultado
+      // Renderizar resultado com cards
       const resultadoDiv = document.getElementById('resultado');
       resultadoDiv.innerHTML = '';
-      for (let [empresa, itens] of Object.entries(fornecedores)) {
+      for (let [empresa, itens] of Object.entries(Object.groupBy(Array.from(precosMap.values()), v => v.empresa))) {
         const div = document.createElement('div');
         div.className = 'fornecedor';
-        div.innerHTML = `<h3>${empresa}</h3><ul>${itens.map(i => `<li>${i.replace(/\n/g, '<br>')}</li>`).join('')}</ul>`;
-        const msg = encodeURIComponent(`Pedido ${empresa}:\n` + itens.join('\n\n'));
+        div.innerHTML = `<h3>${empresa}</h3><div class="cards-container">`;
+
+        itens.forEach(obj => {
+          const linhas = obj.texto.split('\\n');
+          const nome = linhas[0].replace('*', '').replace('*', '').trim();
+          const valorLinha = linhas.find(l => l.includes('Valor unitário')) || '';
+          const detalhes = linhas.slice(1).filter(l => l !== valorLinha).join('<br>');
+
+          div.innerHTML += `
+            <div class="produto-card">
+              <div class="card-header">📦 <strong>${nome}</strong></div>
+              <div class="card-preco">${valorLinha}</div>
+              <div class="card-detalhes">${detalhes}</div>
+            </div>
+          `;
+        });
+
+        div.innerHTML += `</div>`;
+        const msg = encodeURIComponent(`Pedido ${empresa}:\\n` + itens.map(i => i.texto).join('\\n\\n'));
         div.innerHTML += `<a class='whatsapp' href='https://wa.me/?text=${msg}' target='_blank'>Compartilhar via WhatsApp</a>`;
         resultadoDiv.appendChild(div);
       }
